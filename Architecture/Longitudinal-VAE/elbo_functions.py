@@ -72,7 +72,7 @@ def elbo(covar_module0, covar_module1, likelihood, train_xt, train_yt, z, P, T, 
     logDetB = 2 * torch.sum(torch.log(torch.diagonal(LB_st, dim1=-2, dim2=-1))).to(device)
     logDetW = 2 * torch.sum(torch.log(torch.diagonal(LW))).to(device)
     logDet = -logDetK0zz + logDetB + logDetW
-    iB_y_st = torch.solve(train_yt_st, B_st)[0].to(device)
+    iB_y_st = torch.linalg.solve(train_yt_st, B_st)[0].to(device)
     qF1 = torch.sum(train_yt_st*iB_y_st).to(device)
     p = torch.matmul(K0xz.T, torch.reshape(iB_y_st, [P * T])).to(device)
     qF2 = torch.sum(torch.triangular_solve(p[:,None], LW, upper=False)[0] ** 2).to(device)
@@ -126,7 +126,7 @@ def deviance_upper_bound(covar_module0, covar_module1, likelihood, train_xt, m, 
     logDetB = 2 * torch.sum(torch.log(torch.diagonal(LB_st, dim1=-2, dim2=-1))).to(device)
     logDetW = 2 * torch.sum(torch.log(torch.diagonal(LW))).to(device)
     logDetSigma = -logDetK0zz + logDetB + logDetW
-    iB_m_st = torch.solve(m_st, B_st)[0].to(device)
+    iB_m_st = torch.linalg.solve(m_st, B_st)[0].to(device)
     qF1 = torch.sum(m_st*iB_m_st).to(device)
     p = torch.matmul(K0xz.T, torch.reshape(iB_m_st, [P * T])).to(device)
     qF2 = torch.sum(torch.triangular_solve(p[:,None], LW, upper=False)[0] ** 2).to(device)
@@ -174,7 +174,7 @@ def minibatch_KLD_upper_bound(covar_module0, covar_module1, likelihood, latent_d
     B_st = (covar_module1(stacked_x_st, stacked_x_st).evaluate() + torch.eye(T, dtype=torch.double).to(device) * likelihood.noise_covar.noise.unsqueeze(dim=2)).transpose(0,1)
 
     K0zz = K0zz + eps * torch.eye(M, dtype=torch.double).to(device)
-    LK0zz = torch.cholesky(K0zz)
+    LK0zz = torch.linalg.cholesky(K0zz)
     iK0zz = torch.cholesky_solve(torch.eye(M, dtype=torch.double).to(device), LK0zz)
     LB_st = torch.cholesky(B_st)
     iB_st = torch.cholesky_solve(torch.eye(T, dtype=torch.double).to(device), LB_st).squeeze(dim=0)
