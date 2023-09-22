@@ -127,10 +127,10 @@ def hensman_training(nnet_model, type_nnet, epochs, dataset, optimiser, type_KL,
             optimiser.step()
 
             if natural_gradient:
-                LH = torch.cholesky(H)
+                LH = torch.linalg.cholesky(H)
                 iH = torch.cholesky_solve(torch.eye(H.shape[-1], dtype=torch.double).to(device), LH)
                 iH_new = iH + natural_gradient_lr*(grad_H + grad_H.transpose(-1,-2))
-                LiH_new = torch.cholesky(iH_new)
+                LiH_new = torch.linalg.cholesky(iH_new)
                 H = torch.cholesky_solve(torch.eye(H.shape[-1], dtype=torch.double).to(device), LiH_new).detach()
                 m = torch.matmul(H, torch.matmul(iH, m) - natural_gradient_lr*(grad_m - 2*torch.matmul(grad_H, m))).detach()
 
