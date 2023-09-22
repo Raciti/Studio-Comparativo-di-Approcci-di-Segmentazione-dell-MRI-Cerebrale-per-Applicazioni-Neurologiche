@@ -30,11 +30,11 @@ def validation_dubo(latent_dim, covar_module0, covar_module1, likelihood, train_
     stacked_x_st = torch.stack([x_st for i in range(latent_dim)], dim=1)
     K0xz = covar_module0(train_xt, z).evaluate().to(device)
     K0zz = (covar_module0(z, z).evaluate() + eps * torch.eye(z.shape[1], dtype=torch_dtype).to(device)).to(device)
-    LK0zz = torch.cholesky(K0zz).to(device)
+    LK0zz = torch.linalg.cholesky(K0zz).to(device)
     iK0zz = torch.cholesky_solve(torch.eye(z.shape[1], dtype=torch_dtype).to(device), LK0zz).to(device)
     K0_st = covar_module0(stacked_x_st, stacked_x_st).evaluate().transpose(0,1)
     B_st = (covar_module1(stacked_x_st, stacked_x_st).evaluate() + torch.eye(T, dtype=torch.double).to(device) * likelihood.noise_covar.noise.unsqueeze(dim=2)).transpose(0,1)
-    LB_st = torch.cholesky(B_st).to(device)
+    LB_st = torch.linalg.cholesky(B_st).to(device)
     iB_st = torch.cholesky_solve(torch.eye(T, dtype=torch_dtype).to(device), LB_st)
 
     dubo_sum = torch.tensor([0.0]).double().to(device)
@@ -46,7 +46,7 @@ def validation_dubo(latent_dim, covar_module0, covar_module1, likelihood, train_
         K0zx_iB_K0xz = torch.matmul(torch.transpose(K0xz[i], 0, 1), torch.reshape(iB_K0xz, [P*T, K0xz.shape[2]])).to(device)
         W = K0zz[i] + K0zx_iB_K0xz
         W = (W + W.T) / 2
-        LW = torch.cholesky(W).to(device)
+        LW = torch.linalg.cholesky(W).to(device)
         logDetK0zz = 2 * torch.sum(torch.log(torch.diagonal(LK0zz[i]))).to(device)
         logDetB = 2 * torch.sum(torch.log(torch.diagonal(LB_st[i], dim1=-2, dim2=-1))).to(device)
         logDetW = 2 * torch.sum(torch.log(torch.diagonal(LW))).to(device)
