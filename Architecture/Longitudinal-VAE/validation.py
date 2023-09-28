@@ -39,7 +39,7 @@ def validation_dubo(latent_dim, covar_module0, covar_module1, likelihood, train_
 
     dubo_sum = torch.tensor([0.0]).double().to(device)
     for i in range(latent_dim):
-        m_st = torch.reshape(m[:, i], [P, P]).to(device)
+        m_st = torch.reshape(m[:, i], [P, T, 1]).to(device)
         v_st = torch.reshape(v[:, i], [P, T]).to(device)
         K0xz_st = torch.reshape(K0xz[i], [P, T, K0xz.shape[2]]).to(device)
         iB_K0xz = torch.matmul(iB_st[i], K0xz_st).to(device)
