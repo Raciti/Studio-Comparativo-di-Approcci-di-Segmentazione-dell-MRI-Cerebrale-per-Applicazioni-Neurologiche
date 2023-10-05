@@ -51,6 +51,11 @@ def validation_dubo(latent_dim, covar_module0, covar_module1, likelihood, train_
         logDetB = 2 * torch.sum(torch.log(torch.diagonal(LB_st[i], dim1=-2, dim2=-1))).to(device)
         logDetW = 2 * torch.sum(torch.log(torch.diagonal(LW))).to(device)
         logDetSigma = -logDetK0zz + logDetB + logDetW
+
+        print("PROVE A RIGA 55 IN validation.py")
+        print("Dimensione di m_st:", m_st.shape)
+        print("Dimensione di B_st[i]:", B_st[i].shape)
+
         iB_m_st = torch.linalg.solve(m_st, B_st[i])[0].to(device)
         qF1 = torch.sum(m_st*iB_m_st).to(device)
         p = torch.matmul(K0xz[i].T, torch.reshape(iB_m_st, [P * T])).to(device)

@@ -1,6 +1,6 @@
 #   See https://www.python.org/dev/peps/pep-0440/#version-specifiers
 
-numpy>=1.16.2
+numpy>=1.16.2con
 scikit-learn>=0.20.3
 matplotlib>=2.2.2
 nibabel>=2.3.3
@@ -11,3 +11,5 @@ psutil>=5.4.8
 vtk>=8.2.0
 pykeops==1.4.1
 PyQt5
+make>=3.10
+h5py==2.9.0
