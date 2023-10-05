@@ -11,5 +11,5 @@ psutil>=5.4.8
 vtk>=8.2.0
 pykeops==1.4.1
 PyQt5
-make>=3.10
+cmake>=3.10
 h5py==2.9.0
